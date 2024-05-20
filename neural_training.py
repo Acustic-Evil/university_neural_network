@@ -38,8 +38,6 @@ def neural_training():
     np.save("animals", animals)
     np.save("labels", labels)
 
-    animals = np.load("animals.npy")
-    labels = np.load("labels.npy")
 
     s = np.arange(animals.shape[0])
     np.random.shuffle(s)
