@@ -8,36 +8,44 @@ from tensorflow import keras
 def neural_training():
     data = []
     labels = []
-    many_deer = os.listdir("deer")
+    many_deer = os.listdir("dataset/deer")
     for deer in many_deer:
-        imag = cv2.imread("deer/" + deer)
+        imag = cv2.imread("dataset/deer/" + deer)
         img_from_ar = Image.fromarray(imag, 'RGB')
         resized_image = img_from_ar.resize((50, 50))
         data.append(np.array(resized_image))
         labels.append(0)
 
-    cats = os.listdir("cats")
+    cats = os.listdir("dataset/cats")
     for cat in cats:
-        imag = cv2.imread("cats/" + cat)
+        imag = cv2.imread("dataset/cats/" + cat)
         img_from_ar = Image.fromarray(imag, 'RGB')
         resized_image = img_from_ar.resize((50, 50))
         data.append(np.array(resized_image))
         labels.append(1)
 
-    dogs = os.listdir("dogs")
+    dogs = os.listdir("dataset/dogs")
     for dog in dogs:
-        imag = cv2.imread("dogs/" + dog)
+        imag = cv2.imread("dataset/dogs/" + dog)
         img_from_ar = Image.fromarray(imag, 'RGB')
         resized_image = img_from_ar.resize((50, 50))
         data.append(np.array(resized_image))
         labels.append(2)
+
+    # Unknown images
+    unknowns = os.listdir("dataset/unknown")
+    for unknown in unknowns:
+        imag = cv2.imread("dataset/unknown/" + unknown)
+        img_from_ar = Image.fromarray(imag, 'RGB')
+        resized_image = img_from_ar.resize((50, 50))
+        data.append(np.array(resized_image))
+        labels.append(3)
 
     animals = np.array(data)
     labels = np.array(labels)
 
     np.save("animals", animals)
     np.save("labels", labels)
-
 
     s = np.arange(animals.shape[0])
     np.random.shuffle(s)
@@ -76,7 +84,7 @@ def neural_training():
     model.add(Flatten())
     model.add(Dense(500, activation="relu"))
     model.add(Dropout(0.2))
-    model.add(Dense(3, activation="softmax"))
+    model.add(Dense(4, activation="softmax"))
     model.summary()
 
     # compile the model

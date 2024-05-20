@@ -40,13 +40,15 @@ def get_animal_name(label):
         return "cat"
     if label == 2:
         return "dog"
+    if label == 3:
+        return "unknown"
 
 
-def predict_animal(file):
+def predict_animal(file, threshold=0.6):
     # Check if model files exist, if not, start training
     if not check_model_files():
         print("Model files not found, starting training...")
-        neural_training()
+        neural_training.neural_training()
 
     print("Predicting .................................")
     model = load_model()
@@ -56,6 +58,11 @@ def predict_animal(file):
     prediction_score = model.predict(ar, verbose=1)
     label_index = np.argmax(prediction_score)
     acc = np.max(prediction_score)
+
+    if acc < threshold and label_index == 3:
+        print("Unknown object detected with confidence:", acc)
+        raise ValueError("The model could not recognize the object.")
+
     animal = get_animal_name(label_index)
     return animal, acc
 
@@ -64,17 +71,20 @@ def upload_image():
     file_path = filedialog.askopenfilename()
     if not file_path:
         return
-    animal, acc = predict_animal(file_path)
-    display_result(file_path, animal, acc)
+    try:
+        animal, acc = predict_animal(file_path)
+        display_result(file_path, animal, acc)
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
 
 
 def display_result(image_path, animal, acc):
-    load = Image.open(image_path)
-    render = ImageTk.PhotoImage(load)
+    # load = Image.open(image_path)
+    # render = ImageTk.PhotoImage(load)
 
-    img = Label(image=render)
-    img.image = render
-    img.grid(column=1, row=1, padx=10, pady=10)
+    # img = Label(image=render)
+    # img.image = render
+    # img.grid(column=1, row=1, padx=10, pady=10)
 
     result_text.set(f"The predicted Animal is a {animal} with accuracy = {acc}")
     result_label.grid(column=1, row=2, padx=10, pady=10)
