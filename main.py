@@ -37,9 +37,9 @@ def get_animal_name(label):
     if label == 0:
         return "deer"
     if label == 1:
-        return "cat"
+        return "cow"
     if label == 2:
-        return "dog"
+        return "moose"
     if label == 3:
         return "unknown"
 

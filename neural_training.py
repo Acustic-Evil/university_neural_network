@@ -16,17 +16,17 @@ def neural_training():
         data.append(np.array(resized_image))
         labels.append(0)
 
-    cats = os.listdir("dataset/cats")
-    for cat in cats:
-        imag = cv2.imread("dataset/cats/" + cat)
+    cows = os.listdir("dataset/cows")
+    for cow in cows:
+        imag = cv2.imread("dataset/cows/" + cow)
         img_from_ar = Image.fromarray(imag, 'RGB')
         resized_image = img_from_ar.resize((50, 50))
         data.append(np.array(resized_image))
         labels.append(1)
 
-    dogs = os.listdir("dataset/dogs")
-    for dog in dogs:
-        imag = cv2.imread("dataset/dogs/" + dog)
+    elks = os.listdir("dataset/moose")
+    for moose in elks:
+        imag = cv2.imread("dataset/moose/" + moose)
         img_from_ar = Image.fromarray(imag, 'RGB')
         resized_image = img_from_ar.resize((50, 50))
         data.append(np.array(resized_image))
