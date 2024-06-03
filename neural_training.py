@@ -90,7 +90,7 @@ def neural_training():
     # compile the model
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(x_train, y_train, batch_size=50, epochs=100, verbose=1)
+    model.fit(x_train, y_train, batch_size=50, epochs=300, verbose=1)
 
     score = model.evaluate(x_test, y_test, verbose=1)
     print('\n', 'Test accuracy:', score[1])

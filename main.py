@@ -44,7 +44,7 @@ def get_animal_name(label):
         return "unknown"
 
 
-def predict_animal(file, threshold=0.6):
+def predict_animal(file, threshold=0.8):
     # Check if model files exist, if not, start training
     if not check_model_files():
         print("Model files not found, starting training...")
@@ -59,7 +59,7 @@ def predict_animal(file, threshold=0.6):
     label_index = np.argmax(prediction_score)
     acc = np.max(prediction_score)
 
-    if acc < threshold and label_index == 3:
+    if acc < threshold or label_index == 3:
         print("Unknown object detected with confidence:", acc)
         raise ValueError("The model could not recognize the object.")
 
