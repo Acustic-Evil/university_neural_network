@@ -29,7 +29,7 @@ def load_model():
 def convert_to_array(img):
     im = cv2.imread(img)
     img = Image.fromarray(im, 'RGB')
-    image = img.resize((50, 50))
+    image = img.resize((128, 128))
     return np.array(image)
 
 
@@ -44,7 +44,7 @@ def get_animal_name(label):
         return "unknown"
 
 
-def predict_animal(file, threshold=0.8):
+def predict_animal(file, threshold=0.5):
     # Check if model files exist, if not, start training
     if not check_model_files():
         print("Model files not found, starting training...")
@@ -54,17 +54,17 @@ def predict_animal(file, threshold=0.8):
     model = load_model()
     ar = convert_to_array(file)
     ar = ar / 255
-    ar = ar.reshape(1, 50, 50, 3)
+    ar = ar.reshape(1, 128, 128, 3)
     prediction_score = model.predict(ar, verbose=1)
     label_index = np.argmax(prediction_score)
     acc = np.max(prediction_score)
 
     if acc < threshold or label_index == 3:
         print("Unknown object detected with confidence:", acc)
-        raise ValueError("The model could not recognize the object.")
+        raise ValueError(f"The model could not recognize the object. Scores: {prediction_score}")
 
     animal = get_animal_name(label_index)
-    return animal, acc
+    return animal, acc, prediction_score
 
 
 def upload_image():
@@ -72,35 +72,41 @@ def upload_image():
     if not file_path:
         return
     try:
-        animal, acc = predict_animal(file_path)
-        display_result(file_path, animal, acc)
+        animal, acc, prediction_score = predict_animal(file_path)
+        display_result(file_path, animal, acc, prediction_score)
     except ValueError as e:
         messagebox.showerror("Error", str(e))
 
 
-def display_result(image_path, animal, acc):
+def display_result(image_path, animal, acc, prediction_score):
     # load = Image.open(image_path)
     # render = ImageTk.PhotoImage(load)
 
     # img = Label(image=render)
     # img.image = render
     # img.grid(column=1, row=1, padx=10, pady=10)
-
-    result_text.set(f"The predicted Animal is a {animal} with accuracy = {acc}")
+    result_text.set(f"The predicted Animal is a {animal} with accuracy = {acc}\nScores: {prediction_score}")
     result_label.grid(column=1, row=2, padx=10, pady=10)
 
 
 def create_gui():
-    global result_text, result_label
+    global result_text, result_label, image_frame
 
     root = tk.Tk()
-    root.title("Animal Predictor")
+    root.title("Animal Classifier")
+    root.geometry("800x600")
 
-    upload_btn = Button(root, text="Upload Image", command=upload_image)
+    main_frame = tk.Frame(root)
+    main_frame.pack(padx=20, pady=20)
+
+    upload_btn = Button(main_frame, text="Upload Image", command=upload_image, font=("Helvetica", 14))
     upload_btn.grid(column=0, row=0, padx=10, pady=10)
 
+    image_frame = tk.Frame(main_frame)
+    image_frame.grid(column=0, row=1, padx=10, pady=10)
+
     result_text = tk.StringVar()
-    result_label = Label(root, textvariable=result_text, font=("Helvetica", 16))
+    result_label = Label(main_frame, textvariable=result_text, font=("Helvetica", 16))
 
     root.mainloop()
 
