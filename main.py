@@ -4,10 +4,8 @@ import numpy as np
 from PIL import Image, ImageTk
 from tensorflow import keras
 from keras.models import model_from_json
-import tkinter as tk
-from tkinter import filedialog, messagebox, Label, Button
 import neural_training
-
+from ui import create_gui, display_result
 
 # Function to check if model files exist
 def check_model_files():
@@ -45,7 +43,6 @@ def get_animal_name(label):
 
 
 def predict_animal(file, threshold=0.5):
-    # Check if model files exist, if not, start training
     if not check_model_files():
         print("Model files not found, starting training...")
         neural_training.neural_training()
@@ -68,6 +65,7 @@ def predict_animal(file, threshold=0.5):
 
 
 def upload_image():
+    from tkinter import filedialog, messagebox
     file_path = filedialog.askopenfilename()
     if not file_path:
         return
@@ -78,38 +76,5 @@ def upload_image():
         messagebox.showerror("Error", str(e))
 
 
-def display_result(image_path, animal, acc, prediction_score):
-    # load = Image.open(image_path)
-    # render = ImageTk.PhotoImage(load)
-
-    # img = Label(image=render)
-    # img.image = render
-    # img.grid(column=1, row=1, padx=10, pady=10)
-    result_text.set(f"The predicted Animal is a {animal} with accuracy = {acc}\nScores: {prediction_score}")
-    result_label.grid(column=1, row=2, padx=10, pady=10)
-
-
-def create_gui():
-    global result_text, result_label, image_frame
-
-    root = tk.Tk()
-    root.title("Animal Classifier")
-    root.geometry("800x600")
-
-    main_frame = tk.Frame(root)
-    main_frame.pack(padx=20, pady=20)
-
-    upload_btn = Button(main_frame, text="Upload Image", command=upload_image, font=("Helvetica", 14))
-    upload_btn.grid(column=0, row=0, padx=10, pady=10)
-
-    image_frame = tk.Frame(main_frame)
-    image_frame.grid(column=0, row=1, padx=10, pady=10)
-
-    result_text = tk.StringVar()
-    result_label = Label(main_frame, textvariable=result_text, font=("Helvetica", 16))
-
-    root.mainloop()
-
-
 if __name__ == '__main__':
-    create_gui()
+    create_gui(upload_image)
