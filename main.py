@@ -77,4 +77,8 @@ def upload_image():
 
 
 if __name__ == '__main__':
+    if not check_model_files():
+        print("Model files not found, starting training...")
+        neural_training.neural_training()
+
     create_gui(upload_image)
